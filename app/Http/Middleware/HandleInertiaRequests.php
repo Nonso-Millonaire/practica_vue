@@ -27,17 +27,36 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
-    public function share(Request $request): array {
+    public function share(Request $request): array
+    {
         return [
             ...parent::share($request),
-            'auth' => ['user' => $request->user()],
-            // DATOS NUEVOS
-            'locale' => app()->getLocale(),
-            'translations' => json_decode(file_get_contents(lang_path(app()->getLocale() . '.json')), true) ?? [],
-            'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error'),
+
+            // Datos del Usuario Autenticado
+            'auth' => [
+                'user' => $request->user(),
             ],
+
+            // Mensajes Flash (Notificaciones)
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
+                'error'   => fn () => $request->session()->get('error'),
+            ],
+
+            // IDIOMA ACTUAL (Para que el Tick ✔️ funcione)
+            'locale' => app()->getLocale(),
+
+            // TRADUCCIONES (Carga segura del JSON)
+            'translations' => function () {
+                $locale = app()->getLocale();
+                $path = lang_path("{$locale}.json");
+
+                // Solo intentamos leer si el archivo existe para evitar errores
+                return file_exists($path)
+                    ? json_decode(file_get_contents($path), true)
+                    : [];
+            },
         ];
     }
 }

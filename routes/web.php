@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -13,6 +14,14 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+// Cambio de idioma
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'es', 'fr'])) {
+        session()->put('locale', $locale);
+    }
+    return back();
+})->name('lang.switch');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -24,13 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Cambio de idioma
-Route::get('lang/{locale}', function ($locale) {
-    if (in_array($locale, ['en', 'es', 'fr'])) {
-        session()->put('locale', $locale);
-    }
-    return back();
-})->name('lang.switch');
+Route::get('/projects', [ProjectController::class, 'index'])
+    ->name('projects.index');
 
 // CRUD Protegido
 Route::middleware('auth')->group(function () {

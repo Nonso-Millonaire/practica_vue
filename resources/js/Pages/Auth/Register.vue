@@ -1,9 +1,4 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -21,93 +16,117 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
+    <div class="min-h-screen flex bg-base-100">
+        <Head title="Registrarse" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+        <div class="hidden lg:flex w-1/2 bg-gradient-to-tr from-secondary to-primary relative overflow-hidden items-center justify-center p-12 text-white">
+            <div class="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+            <div class="relative z-10 max-w-lg text-center">
+                <h2 class="text-5xl font-bold mb-6">Únete a nosotros</h2>
+                <p class="text-lg opacity-90 leading-relaxed">
+                    Crea tu cuenta hoy y comienza a gestionar tus proyectos educativos de manera eficiente y profesional.
+                </p>
+                <div class="mt-8 text-left space-y-4 inline-block">
+                    <div class="flex items-center gap-3">
+                        <div class="badge badge-success badge-xs"></div> <span>Acceso ilimitado al dashboard</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="badge badge-success badge-xs"></div> <span>Gestión de alumnos en tiempo real</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="badge badge-success badge-xs"></div> <span>Soporte multi-idioma</span>
+                    </div>
+                </div>
             </div>
+        </div>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-base-100">
+            <div class="w-full max-w-md space-y-8">
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-base-content">Crear cuenta</h2>
+                    <p class="text-base-content/60 mt-2">Rellena el formulario para empezar.</p>
+                </div>
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <form @submit.prevent="submit" class="space-y-5">
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">Nombre Completo</span></label>
+                        <input
+                            id="name"
+                            type="text"
+                            v-model="form.name"
+                            required
+                            autofocus
+                            class="input input-bordered w-full focus:input-secondary"
+                            :class="{ 'input-error': form.errors.name }"
+                            placeholder="Tu nombre"
+                        />
+                        <span v-if="form.errors.name" class="text-error text-xs mt-1">{{ form.errors.name }}</span>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">Correo Electrónico</span></label>
+                        <input
+                            id="email"
+                            type="email"
+                            v-model="form.email"
+                            required
+                            class="input input-bordered w-full focus:input-secondary"
+                            :class="{ 'input-error': form.errors.email }"
+                            placeholder="nombre@empresa.com"
+                        />
+                        <span v-if="form.errors.email" class="text-error text-xs mt-1">{{ form.errors.email }}</span>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">Contraseña</span></label>
+                        <input
+                            id="password"
+                            type="password"
+                            v-model="form.password"
+                            required
+                            class="input input-bordered w-full focus:input-secondary"
+                            :class="{ 'input-error': form.errors.password }"
+                            placeholder="Mínimo 8 caracteres"
+                        />
+                        <span v-if="form.errors.password" class="text-error text-xs mt-1">{{ form.errors.password }}</span>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label"><span class="label-text font-semibold">Confirmar Contraseña</span></label>
+                        <input
+                            id="password_confirmation"
+                            type="password"
+                            v-model="form.password_confirmation"
+                            required
+                            class="input input-bordered w-full focus:input-secondary"
+                            :class="{ 'input-error': form.errors.password_confirmation }"
+                            placeholder="Repite la contraseña"
+                        />
+                        <span v-if="form.errors.password_confirmation" class="text-error text-xs mt-1">{{ form.errors.password_confirmation }}</span>
+                    </div>
+
+                    <div class="pt-4">
+                        <button
+                            type="submit"
+                            class="btn btn-secondary w-full shadow-lg shadow-secondary/30"
+                            :class="{ 'loading': form.processing }"
+                            :disabled="form.processing"
+                        >
+                            {{ form.processing ? 'Registrando...' : 'Crear Cuenta' }}
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center text-sm text-base-content/70 mt-8">
+                    ¿Ya tienes una cuenta?
+                    <Link :href="route('login')" class="link link-secondary font-bold no-underline hover:underline">
+                        Inicia sesión aquí
+                    </Link>
+                </div>
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </div>
 </template>

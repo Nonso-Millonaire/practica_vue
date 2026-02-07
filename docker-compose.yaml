@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: 'mysql:8.0'
+    container_name: mysql_practica_vue
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vue       # Coincide con tu DB_DATABASE
+      MYSQL_USER: vue           # Coincide con tu DB_USERNAME
+      MYSQL_PASSWORD: vue       # Coincide con tu DB_PASSWORD
+    ports:
+      # Tu PC (3309) -> Contenedor Docker (3306)
+      - '3309:3306'
+    volumes:
+      - 'mysql_vue_data:/var/lib/mysql'
+    networks:
+      - practica-network
+
+  phpmyadmin:
+    image: 'phpmyadmin/phpmyadmin'
+    container_name: pma_practica_vue
+    restart: always
+    links:
+      - mysql:db
+    depends_on:
+      - mysql
+    ports:
+      # Accederás por http://localhost:8081
+      - '8081:80'
+    environment:
+      PMA_HOST: mysql
+    networks:
+      - practica-network
+
+networks:
+  practica-network:
+    driver: bridge
+
+volumes:
+  mysql_vue_data:
