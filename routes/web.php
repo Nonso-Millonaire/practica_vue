@@ -24,4 +24,20 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Cambio de idioma
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'es', 'fr'])) {
+        session()->put('locale', $locale);
+    }
+    return back();
+})->name('lang.switch');
+
+// CRUD Protegido
+Route::middleware('auth')->group(function () {
+    Route::resource('students', \App\Http\Controllers\StudentController::class);
+    // Ruta simple para proyectos (solo lectura para cumplir requisito)
+    Route::get('/projects', function() {
+        return inertia('Projects/Index', ['projects' => \App\Models\Project::all()]);
+    })->name('projects.index');
+});
 require __DIR__.'/auth.php';

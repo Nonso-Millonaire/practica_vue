@@ -10,8 +10,14 @@ class ProjectSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        \App\Models\Project::create(['name' => 'Sistema de Gestión', 'description' => 'Laravel + Vue']);
+    public function run(): void {
+        \App\Models\Project::create([
+            'title' => 'Gestión Laravel',
+            'description' => 'Aplicación completa de práctica'
+        ]);
+        \App\Models\Project::create([
+            'title' => 'Web Corporativa',
+            'description' => 'Landing page con Vue'
+        ]);
     }
 }

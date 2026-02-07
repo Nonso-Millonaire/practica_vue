@@ -27,12 +27,16 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
-    public function share(Request $request): array
-    {
+    public function share(Request $request): array {
         return [
             ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
+            'auth' => ['user' => $request->user()],
+            // DATOS NUEVOS
+            'locale' => app()->getLocale(),
+            'translations' => json_decode(file_get_contents(lang_path(app()->getLocale() . '.json')), true) ?? [],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }
