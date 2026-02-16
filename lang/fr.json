@@ -300,5 +300,6 @@
     "confirm_password": "Confirmer le mot de passe",
     "delete_account": "Supprimer le compte",
     "delete_account_description": "Une fois votre compte supprimé, toutes ses ressources et données seront définitivement effacées. Avant de supprimer votre compte, veuillez télécharger toutes les données ou informations que vous souhaitez conserver.",
-    "delete_account_button": "SUPPRIMER LE COMPTE"
+    "delete_account_button": "SUPPRIMER LE COMPTE",
+    "my_account": "Mon Compte"
 }

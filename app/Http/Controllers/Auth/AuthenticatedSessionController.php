@@ -41,11 +41,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // 1. Guardamos el idioma actual antes de borrar la sesión
+        $currentLocale = session('locale');
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        // 2. Si teníamos un idioma guardado, lo restauramos en la nueva sesión
+        if ($currentLocale) {
+            session(['locale' => $currentLocale]);
+        }
 
         return redirect('/');
     }

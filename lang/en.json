@@ -300,5 +300,6 @@
     "confirm_password": "Confirm Password",
     "delete_account": "Delete Account",
     "delete_account_description": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
-    "delete_account_button": "DELETE ACCOUNT"
+    "delete_account_button": "DELETE ACCOUNT",
+    "my_account": "My Account"
 }

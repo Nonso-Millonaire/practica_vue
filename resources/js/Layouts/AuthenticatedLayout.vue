@@ -1,16 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import LanguageSelector from '@/Components/LanguageSelector.vue'; // <--- IMPORTANTE
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 
 const showingNavigationDropdown = ref(false);
-const user = usePage().props.auth.user;
-const t = usePage().props.translations; // Traducciones globales
+const page = usePage();
+const user = page.props.auth.user;
+
+// Usamos computed para que las traducciones sean reactivas
+const t = computed(() => page.props.translations);
 </script>
 
 <template>
@@ -54,7 +57,10 @@ const t = usePage().props.translations; // Traducciones globales
                                 </template>
 
                                 <template #content>
-                                    <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                    <DropdownLink :href="route('profile.edit')">
+                                        {{ t?.my_account || 'Mi Cuenta' }}
+                                    </DropdownLink>
+
                                     <DropdownLink :href="route('logout')" method="post" as="button">
                                         {{ t?.logout || 'Log Out' }}
                                     </DropdownLink>
@@ -77,13 +83,13 @@ const t = usePage().props.translations; // Traducciones globales
             <div :class="{'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown}" class="sm:hidden">
                 <div class="pt-2 pb-3 space-y-1">
                     <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                        {{ t?.dashboard }}
+                        {{ t?.dashboard || 'Dashboard' }}
                     </ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('students.index')" :active="route().current('students.*')">
-                        {{ t?.students }}
+                        {{ t?.students || 'Alumnos' }}
                     </ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('projects.index')" :active="route().current('projects.*')">
-                        {{ t?.projects }}
+                        {{ t?.projects || 'Proyectos' }}
                     </ResponsiveNavLink>
                 </div>
                 <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
@@ -92,8 +98,11 @@ const t = usePage().props.translations; // Traducciones globales
                         <div class="font-medium text-sm text-gray-500">{{ user.email }}</div>
                     </div>
                     <div class="mt-3 space-y-1">
+                        <ResponsiveNavLink :href="route('profile.edit')">
+                            {{ t?.my_account || 'Mi Cuenta' }}
+                        </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                            {{ t?.logout }}
+                            {{ t?.logout || 'Log Out' }}
                         </ResponsiveNavLink>
                     </div>
                 </div>

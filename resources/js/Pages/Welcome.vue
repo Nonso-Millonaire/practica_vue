@@ -5,7 +5,6 @@ import { computed } from 'vue';
 
 defineProps({ canLogin: Boolean, canRegister: Boolean });
 
-// 1. Accedemos a las traducciones que nos envía Laravel
 const page = usePage();
 const t = computed(() => page.props.translations);
 const user = computed(() => page.props.auth.user);
@@ -61,17 +60,13 @@ const user = computed(() => page.props.auth.user);
                     {{ t?.welcome_subtitle || 'Plataforma integral...' }}
                 </p>
 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link v-if="!user" :href="route('login')" class="btn btn-primary btn-lg rounded-xl px-10 shadow-xl hover:scale-105 transition-transform">
+                <div class="flex justify-center">
+                    <Link v-if="!user" :href="route('login')" class="btn btn-primary btn-lg rounded-xl px-12 shadow-xl hover:scale-105 transition-transform">
                         {{ t?.access_portal || 'Acceder al Portal' }}
                     </Link>
-                    <Link v-else :href="route('dashboard')" class="btn btn-primary btn-lg rounded-xl px-10 shadow-xl hover:scale-105 transition-transform">
+                    <Link v-else :href="route('dashboard')" class="btn btn-primary btn-lg rounded-xl px-12 shadow-xl hover:scale-105 transition-transform">
                         {{ t?.dashboard || 'Dashboard' }}
                     </Link>
-
-                    <a href="https://laravel.com" target="_blank" class="btn btn-outline btn-lg rounded-xl px-10">
-                        {{ t?.documentation || 'Documentación' }}
-                    </a>
                 </div>
             </div>
         </main>
