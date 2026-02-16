@@ -100,10 +100,10 @@ const deleteStudent = (id) => {
                                 <td>{{ student.email }}</td>
                                 <td class="flex justify-end gap-2">
                                     <button @click="openModal(student)" class="btn btn-warning btn-xs text-white">
-                                        ✏️ {{ t?.edit || 'Editar' }}
+                                         {{ t?.edit || 'Editar' }}
                                     </button>
                                     <button @click="deleteStudent(student.id)" class="btn btn-error btn-xs text-white">
-                                        🗑️ {{ t?.delete || 'Borrar' }}
+                                         {{ t?.delete || 'Borrar' }}
                                     </button>
                                 </td>
                             </tr>

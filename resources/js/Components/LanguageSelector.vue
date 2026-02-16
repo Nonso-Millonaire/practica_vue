@@ -1,16 +1,15 @@
 <script setup>
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const page = usePage();
-// Mapeo de códigos a banderas para que quede visual
 const locales = {
     es: { flag: '🇪🇸', label: 'Español' },
     en: { flag: '🇬🇧', label: 'English' },
     fr: { flag: '🇫🇷', label: 'Français' },
 };
 
-const currentLocale = computed(() => page.props.locale || 'es');
+const currentLocale = computed(() => page.props.locale, 'es');
 </script>
 
 <template>
@@ -22,7 +21,7 @@ const currentLocale = computed(() => page.props.locale || 'es');
         </div>
         <ul tabindex="0" class="dropdown-content z-[50] menu p-2 shadow-lg bg-base-100 rounded-box w-52 border border-base-200">
             <li v-for="(data, code) in locales" :key="code">
-                <Link
+                <a
                     :href="route('lang.switch', code)"
                     :class="{ 'active': currentLocale === code }"
                     class="flex justify-between"
@@ -30,8 +29,8 @@ const currentLocale = computed(() => page.props.locale || 'es');
                     <span class="flex items-center gap-2">
                         <span class="text-xl">{{ data.flag }}</span> {{ data.label }}
                     </span>
-                    <span v-if="currentLocale === code" class="text-success">✓</span>
-                </Link>
+                    <span v-if="currentLocale === code" class="text-success font-bold">✓</span>
+                </a>
             </li>
         </ul>
     </div>

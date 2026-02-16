@@ -1,9 +1,11 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-// Obtenemos las traducciones globales
-const t = usePage().props.translations;
+const page = usePage();
+// Usamos computed para asegurar reactividad si cambia el idioma
+const t = computed(() => page.props.translations);
 </script>
 
 <template>
@@ -27,11 +29,11 @@ const t = usePage().props.translations;
                                 👨‍🎓 {{ t?.students || 'Alumnos' }}
                             </h2>
                             <p class="opacity-70 mt-2">
-                                Gestión completa del alumnado: Altas, bajas, listados y edición de perfiles.
+                                {{ t?.student_card_desc || 'Gestión completa del alumnado.' }}
                             </p>
                             <div class="card-actions justify-end mt-6">
                                 <Link :href="route('students.index')" class="btn btn-primary">
-                                    Gestionar
+                                    {{ t?.manage || 'Gestionar' }}
                                 </Link>
                             </div>
                         </div>
@@ -43,11 +45,11 @@ const t = usePage().props.translations;
                                 🚀 {{ t?.projects || 'Proyectos' }}
                             </h2>
                             <p class="opacity-70 mt-2">
-                                Visualiza y asigna proyectos académicos disponibles en el sistema.
+                                {{ t?.project_card_desc || 'Visualiza y asigna proyectos.' }}
                             </p>
                             <div class="card-actions justify-end mt-6">
                                 <Link :href="route('projects.index')" class="btn btn-secondary">
-                                    Ver Proyectos
+                                    {{ t?.view_projects || 'Ver Proyectos' }}
                                 </Link>
                             </div>
                         </div>
@@ -56,14 +58,14 @@ const t = usePage().props.translations;
                     <div class="card bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all border-l-4 border-green-500">
                         <div class="card-body">
                             <h2 class="card-title text-2xl flex items-center gap-2">
-                                ⚙️ Mi Cuenta
+                                ⚙️ {{ t?.my_account || 'Mi Cuenta' }}
                             </h2>
                             <p class="opacity-70 mt-2">
-                                Configura tus datos personales, contraseña y preferencias de la cuenta.
+                                {{ t?.profile_card_desc || 'Configura tus datos personales.' }}
                             </p>
                             <div class="card-actions justify-end mt-6">
                                 <Link :href="route('profile.edit')" class="btn btn-accent text-white">
-                                    Configurar
+                                    {{ t?.configure || 'Configurar' }}
                                 </Link>
                             </div>
                         </div>

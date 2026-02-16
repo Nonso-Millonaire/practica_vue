@@ -4,8 +4,11 @@ import LanguageSelector from '@/Components/LanguageSelector.vue';
 import { computed } from 'vue';
 
 defineProps({ canLogin: Boolean, canRegister: Boolean });
-const t = computed(() => usePage().props.translations);
-const user = computed(() => usePage().props.auth.user);
+
+// 1. Accedemos a las traducciones que nos envía Laravel
+const page = usePage();
+const t = computed(() => page.props.translations);
+const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
@@ -51,30 +54,30 @@ const user = computed(() => usePage().props.auth.user);
                 </div>
 
                 <h1 class="text-5xl md:text-7xl font-black mb-8 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                    Gestión Educativa <br/> Inteligente
+                    {{ t?.welcome_title || 'Gestión Educativa Inteligente' }}
                 </h1>
 
                 <p class="text-xl opacity-70 mb-10 max-w-2xl mx-auto leading-relaxed">
-                    Una plataforma integral diseñada con <b>Laravel</b> y <b>Vue</b> para administrar alumnos, proyectos y recursos académicos de forma eficiente y segura.
+                    {{ t?.welcome_subtitle || 'Plataforma integral...' }}
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link v-if="!user" :href="route('login')" class="btn btn-primary btn-lg rounded-xl px-10 shadow-xl hover:scale-105 transition-transform">
-                        Acceder al Portal
+                        {{ t?.access_portal || 'Acceder al Portal' }}
                     </Link>
                     <Link v-else :href="route('dashboard')" class="btn btn-primary btn-lg rounded-xl px-10 shadow-xl hover:scale-105 transition-transform">
-                        Ir al Panel de Control
+                        {{ t?.dashboard || 'Dashboard' }}
                     </Link>
 
                     <a href="https://laravel.com" target="_blank" class="btn btn-outline btn-lg rounded-xl px-10">
-                        Documentación
+                        {{ t?.documentation || 'Documentación' }}
                     </a>
                 </div>
             </div>
         </main>
 
         <footer class="footer items-center p-4 bg-base-100 text-base-content/50 border-t border-base-200 justify-center">
-            <p>Copyright © {{ new Date().getFullYear() }} - Práctica Laravel Vue</p>
+            <p>Copyright © {{ new Date().getFullYear() }} - {{ t?.copyright || 'Todos los derechos reservados' }}</p>
         </footer>
     </div>
 </template>

@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProjectController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -18,7 +20,11 @@ Route::get('/', function () {
 // Cambio de idioma
 Route::get('lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'es', 'fr'])) {
-        session()->put('locale', $locale);
+        // 1. Guardamos en sesión
+        Session::put('locale', $locale);
+
+        // 2. Forzamos el cambio en la aplicación AHORA MISMO
+        App::setLocale($locale);
     }
     return back();
 })->name('lang.switch');
@@ -40,8 +46,6 @@ Route::get('/projects', [ProjectController::class, 'index'])
 Route::middleware('auth')->group(function () {
     Route::resource('students', \App\Http\Controllers\StudentController::class);
     // Ruta simple para proyectos (solo lectura para cumplir requisito)
-    Route::get('/projects', function() {
-        return inertia('Projects/Index', ['projects' => \App\Models\Project::all()]);
-    })->name('projects.index');
+    Route::resource('projects', ProjectController::class);
 });
 require __DIR__.'/auth.php';
