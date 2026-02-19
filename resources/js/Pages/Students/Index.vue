@@ -4,11 +4,23 @@ import { Head, useForm, usePage, router, Link } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import Swal from 'sweetalert2';
 
-const props = defineProps({ students: Object });
+// 1. Añadimos 'filters' a las props para el buscador
+const props = defineProps({ students: Object, filters: Object });
 const page = usePage();
 const t = computed(() => page.props.translations);
 
-// Control del Modal
+// --- LÓGICA DEL BUSCADOR ---
+const search = ref(props.filters?.search || '');
+
+watch(search, (value) => {
+    router.get(route('students.index'), { search: value }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+});
+
+// --- LÓGICA DEL MODAL ---
 const isModalOpen = ref(false);
 const isEditing = ref(false);
 const form = useForm({ id: null, name: '', email: '' });
@@ -16,9 +28,11 @@ const form = useForm({ id: null, name: '', email: '' });
 // Escuchar mensajes flash (Éxito/Error)
 watch(() => page.props.flash, (flash) => {
     if (flash.success || flash.message) {
+        // Traducimos el mensaje flash si existe en el JSON
+        const translatedMessage = t.value?.[flash.message] || flash.message || flash.success;
         Swal.fire({
             icon: 'success',
-            title: flash.success || flash.message,
+            title: translatedMessage,
             toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
         });
         isModalOpen.value = false;
@@ -48,14 +62,14 @@ const submit = () => {
 
 const deleteStudent = (id) => {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: "No podrás revertir esto",
+        title: t.value?.are_you_sure || '¿Estás seguro?',
+        text: t.value?.cant_revert || "No podrás revertir esto",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, borrar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonText: t.value?.delete || 'Sí, borrar',
+        cancelButtonText: t.value?.cancel || 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(route('students.destroy', id));
@@ -69,13 +83,23 @@ const deleteStudent = (id) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ t?.students || 'Gestión de Alumnos' }}
                 </h2>
-                <button @click="openModal()" class="btn btn-primary btn-sm shadow-lg">
-                    + {{ t?.add_student || 'Nuevo Alumno' }}
-                </button>
+
+                <div class="flex gap-4 w-full sm:w-auto">
+                    <input
+                        v-model="search"
+                        type="text"
+                        :placeholder="t?.search || 'Buscar...'"
+                        class="input input-bordered input-sm w-full sm:w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+
+                    <button v-if="$page.props.auth.user.role === 'admin'" @click="openModal()" class="btn btn-primary btn-sm shadow-lg whitespace-nowrap">
+                        + {{ t?.add_student || 'Nuevo Alumno' }}
+                    </button>
+                </div>
             </div>
         </template>
 
@@ -99,12 +123,21 @@ const deleteStudent = (id) => {
                                 <td>{{ student.name }}</td>
                                 <td>{{ student.email }}</td>
                                 <td class="flex justify-end gap-2">
-                                    <button @click="openModal(student)" class="btn btn-warning btn-xs text-white">
-                                         {{ t?.edit || 'Editar' }}
-                                    </button>
-                                    <button @click="deleteStudent(student.id)" class="btn btn-error btn-xs text-white">
-                                         {{ t?.delete || 'Borrar' }}
-                                    </button>
+
+                                    <template v-if="$page.props.auth.user.role === 'admin'">
+                                        <button @click="openModal(student)" class="btn btn-warning btn-xs text-white">
+                                            {{ t?.edit || 'Editar' }}
+                                        </button>
+                                        <button @click="deleteStudent(student.id)" class="btn btn-error btn-xs text-white">
+                                            {{ t?.delete || 'Borrar' }}
+                                        </button>
+                                    </template>
+                                    <span v-else class="text-xs text-gray-400 mt-1">{{ t?.read_only || 'Solo lectura' }}</span>
+                                </td>
+                            </tr>
+                            <tr v-if="students.data.length === 0">
+                                <td colspan="4" class="text-center py-6 text-gray-500">
+                                    No se encontraron resultados.
                                 </td>
                             </tr>
                             </tbody>
@@ -132,7 +165,7 @@ const deleteStudent = (id) => {
 
                 <form @submit.prevent="submit" class="flex flex-col gap-4">
                     <div>
-                        <label class="label"><span class="label-text text-gray-700 dark:text-gray-300">Nombre</span></label>
+                        <label class="label"><span class="label-text text-gray-700 dark:text-gray-300">{{ t?.name || 'Nombre' }}</span></label>
                         <input
                             v-model="form.name"
                             type="text"
@@ -143,7 +176,7 @@ const deleteStudent = (id) => {
                     </div>
 
                     <div>
-                        <label class="label"><span class="label-text text-gray-700 dark:text-gray-300">Email</span></label>
+                        <label class="label"><span class="label-text text-gray-700 dark:text-gray-300">{{ t?.email || 'Email' }}</span></label>
                         <input
                             v-model="form.email"
                             type="email"

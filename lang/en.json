@@ -301,5 +301,9 @@
     "delete_account": "Delete Account",
     "delete_account_description": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
     "delete_account_button": "DELETE ACCOUNT",
-    "my_account": "My Account"
+    "my_account": "My Account",
+    "users": "Users",
+    "role": "Role",
+    "role_updated": "Role updated successfully!",
+    "cannot_change_own_role": "For security reasons, you cannot change your own role."
 }

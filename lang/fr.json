@@ -301,5 +301,9 @@
     "delete_account": "Supprimer le compte",
     "delete_account_description": "Une fois votre compte supprimé, toutes ses ressources et données seront définitivement effacées. Avant de supprimer votre compte, veuillez télécharger toutes les données ou informations que vous souhaitez conserver.",
     "delete_account_button": "SUPPRIMER LE COMPTE",
-    "my_account": "Mon Compte"
+    "my_account": "Mon Compte",
+    "users": "Utilisateurs",
+    "role": "Rôle",
+    "role_updated": "Rôle mis à jour avec succès !",
+    "cannot_change_own_role": "Pour des raisons de sécurité, vous ne pouvez pas modifier votre propre rôle."
 }

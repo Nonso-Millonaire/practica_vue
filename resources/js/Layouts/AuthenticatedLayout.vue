@@ -38,11 +38,14 @@ const t = computed(() => page.props.translations);
                             <NavLink :href="route('projects.index')" :active="route().current('projects.*')">
                                 {{ t?.projects || 'Proyectos' }}
                             </NavLink>
+
+                            <NavLink v-if="$page.props.auth.user.role === 'admin'" :href="route('users.index')" :active="route().current('users.*')">
+                                {{ t?.users || 'Usuarios' }}
+                            </NavLink>
                         </div>
                     </div>
 
                     <div class="hidden sm:flex sm:items-center sm:ml-6 gap-4">
-
                         <LanguageSelector />
 
                         <div class="relative">
@@ -91,7 +94,12 @@ const t = computed(() => page.props.translations);
                     <ResponsiveNavLink :href="route('projects.index')" :active="route().current('projects.*')">
                         {{ t?.projects || 'Proyectos' }}
                     </ResponsiveNavLink>
+
+                    <ResponsiveNavLink v-if="$page.props.auth.user.role === 'admin'" :href="route('users.index')" :active="route().current('users.*')">
+                        {{ t?.users || 'Usuarios' }}
+                    </ResponsiveNavLink>
                 </div>
+
                 <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                     <div class="px-4">
                         <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ user.name }}</div>

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -49,3 +50,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('projects', ProjectController::class);
 });
 require __DIR__.'/auth.php';
+
+Route::middleware('auth')->group(function () {
+    // ... tus resource de projects y students ...
+
+    // Rutas de gestión de usuarios
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+});

@@ -59,7 +59,7 @@ const submit = () => {
                             v-model="form.name"
                             required
                             autofocus
-                            class="input input-bordered w-full focus:input-secondary"
+                            class="input input-bordered w-full focus:input-secondary bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.name }"
                             placeholder="Tu nombre"
                         />
@@ -73,7 +73,7 @@ const submit = () => {
                             type="email"
                             v-model="form.email"
                             required
-                            class="input input-bordered w-full focus:input-secondary"
+                            class="input input-bordered w-full focus:input-secondary bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.email }"
                             placeholder="nombre@empresa.com"
                         />
@@ -87,7 +87,7 @@ const submit = () => {
                             type="password"
                             v-model="form.password"
                             required
-                            class="input input-bordered w-full focus:input-secondary"
+                            class="input input-bordered w-full focus:input-secondary bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.password }"
                             placeholder="Mínimo 8 caracteres"
                         />
@@ -101,7 +101,7 @@ const submit = () => {
                             type="password"
                             v-model="form.password_confirmation"
                             required
-                            class="input input-bordered w-full focus:input-secondary"
+                            class="input input-bordered w-full focus:input-secondary bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.password_confirmation }"
                             placeholder="Repite la contraseña"
                         />

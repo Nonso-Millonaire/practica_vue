@@ -67,7 +67,7 @@ const submit = () => {
                             v-model="form.email"
                             required
                             autofocus
-                            class="input input-bordered w-full focus:input-primary transition-all"
+                            class="input input-bordered w-full focus:input-primary transition-all bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.email }"
                             placeholder="nombre@ejemplo.com"
                         />
@@ -83,7 +83,7 @@ const submit = () => {
                             type="password"
                             v-model="form.password"
                             required
-                            class="input input-bordered w-full focus:input-primary transition-all"
+                            class="input input-bordered w-full focus:input-primary transition-all bg-white text-gray-900"
                             :class="{ 'input-error': form.errors.password }"
                             placeholder="••••••••"
                         />

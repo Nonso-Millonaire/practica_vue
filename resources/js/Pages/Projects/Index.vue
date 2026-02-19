@@ -1,12 +1,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage, useForm, router } from '@inertiajs/vue3';
+import { Head, usePage, useForm, router, Link } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import Swal from 'sweetalert2';
 
-const props = defineProps({ projects: Array });
+// 1. Ahora projects es un Object (por la paginación) y recibimos los filters
+const props = defineProps({ projects: Object, filters: Object });
 const page = usePage();
 const t = computed(() => page.props.translations);
+
+// --- Lógica del Buscador ---
+const search = ref(props.filters?.search || '');
+
+watch(search, (value) => {
+    router.get(route('projects.index'), { search: value }, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+});
 
 // --- Lógica del Modal ---
 const isModalOpen = ref(false);
@@ -43,7 +55,8 @@ const deleteProject = (id) => {
         text: t.value?.cant_revert || "No podrás revertir esto",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Sí, borrar'
+        confirmButtonText: t.value?.delete || 'Sí, borrar',
+        cancelButtonText: t.value?.cancel || 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(route('projects.destroy', id));
@@ -54,9 +67,7 @@ const deleteProject = (id) => {
 // --- Escuchar Mensajes Flash y Traducirlos ---
 watch(() => page.props.flash, (flash) => {
     if (flash.message) {
-        // Aquí ocurre la magia: Si el mensaje es una clave (ej: 'project_created'), lo traducimos
         const translatedMessage = t.value?.[flash.message] || flash.message;
-
         Swal.fire({
             icon: 'success',
             title: translatedMessage,
@@ -71,25 +82,35 @@ watch(() => page.props.flash, (flash) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                     {{ t?.projects || 'Proyectos' }}
                 </h2>
-                <button @click="openModal()" class="btn btn-primary btn-sm shadow-md">
-                    + {{ t?.add_project || 'Crear Proyecto' }}
-                </button>
+
+                <div class="flex gap-4 w-full sm:w-auto">
+                    <input
+                        v-model="search"
+                        type="text"
+                        :placeholder="t?.search || 'Buscar...'"
+                        class="input input-bordered input-sm w-full sm:w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    />
+
+                    <button v-if="$page.props.auth.user.role === 'admin'" @click="openModal()" class="btn btn-primary btn-sm shadow-md whitespace-nowrap">
+                        + {{ t?.add_project || 'Crear Proyecto' }}
+                    </button>
+                </div>
             </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-                <div v-if="projects.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <p class="text-gray-500">No hay proyectos aún. ¡Crea el primero!</p>
+                <div v-if="projects.data.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <p class="text-gray-500">No se encontraron proyectos.</p>
                 </div>
 
                 <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="project in projects" :key="project.id" class="card bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all border-t-4 border-secondary group">
+                    <div v-for="project in projects.data" :key="project.id" class="card bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all border-t-4 border-secondary group">
                         <div class="card-body">
                             <h2 class="card-title text-gray-900 dark:text-white flex justify-between">
                                 {{ project.title }}
@@ -98,15 +119,29 @@ watch(() => page.props.flash, (flash) => {
                                 {{ project.description }}
                             </p>
                             <div class="card-actions justify-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                                <button @click="openModal(project)" class="btn btn-ghost btn-sm btn-circle text-warning tooltip" data-tip="Editar">
-                                    Editar
-                                </button>
-                                <button @click="deleteProject(project.id)" class="btn btn-ghost btn-sm btn-circle text-error tooltip" data-tip="Borrar">
-                                    Borrar
-                                </button>
+
+                                <template v-if="$page.props.auth.user.role === 'admin'">
+                                    <button @click="openModal(project)" class="btn btn-ghost btn-sm btn-circle text-warning tooltip" data-tip="Editar">
+                                        ✏️
+                                    </button>
+                                    <button @click="deleteProject(project.id)" class="btn btn-ghost btn-sm btn-circle text-error tooltip" data-tip="Borrar">
+                                        🗑️
+                                    </button>
+                                </template>
+                                <span v-else class="text-xs text-gray-400 mt-2">{{ t?.read_only || 'Solo lectura' }}</span>
+
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="mt-8 flex justify-center gap-2" v-if="projects.links && projects.links.length > 3">
+                    <Link v-for="link in projects.links"
+                          :key="link.label"
+                          :href="link.url ?? '#'"
+                          v-html="link.label"
+                          class="join-item btn btn-sm"
+                          :class="{ 'btn-active btn-primary': link.active, 'btn-disabled': !link.url }" />
                 </div>
 
             </div>
@@ -115,7 +150,7 @@ watch(() => page.props.flash, (flash) => {
         <div v-if="isModalOpen" class="modal modal-open bg-black/60 backdrop-blur-sm">
             <div class="modal-box bg-white dark:bg-gray-800">
                 <h3 class="font-bold text-lg mb-4 text-gray-900 dark:text-white">
-                    {{ isEditing ? 'Editar Proyecto' : 'Nuevo Proyecto' }}
+                    {{ isEditing ? (t?.edit || 'Editar') : (t?.add_project || 'Nuevo') }} Proyecto
                 </h3>
 
                 <form @submit.prevent="submit" class="flex flex-col gap-4">
@@ -132,8 +167,12 @@ watch(() => page.props.flash, (flash) => {
                     </div>
 
                     <div class="modal-action">
-                        <button type="button" @click="isModalOpen = false" class="btn btn-ghost">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" :disabled="form.processing">Guardar</button>
+                        <button type="button" @click="isModalOpen = false" class="btn btn-ghost text-gray-600 dark:text-gray-400">
+                            {{ t?.cancel || 'Cancelar' }}
+                        </button>
+                        <button type="submit" class="btn btn-primary" :disabled="form.processing">
+                            {{ t?.save || 'Guardar' }}
+                        </button>
                     </div>
                 </form>
             </div>

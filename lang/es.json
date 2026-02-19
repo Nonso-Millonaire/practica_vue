@@ -301,7 +301,11 @@
     "confirm_password": "Confirmar Contraseña",
     "delete_account": "Eliminar Cuenta",
     "delete_account_description": "Una vez que se elimine tu cuenta, todos sus recursos y datos se eliminarán permanentemente. Antes de eliminar tu cuenta, descarga cualquier dato o información que desees conservar.",
-    "delete_account_button": "ELIMINAR CUENTA"
+    "delete_account_button": "ELIMINAR CUENTA",
+    "users": "Usuarios",
+    "role": "Rol",
+    "role_updated": "¡Rol actualizado correctamente!",
+    "cannot_change_own_role": "Por seguridad, no puedes cambiar tu propio rol."
 
 
 }
